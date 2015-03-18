@@ -60,7 +60,6 @@ def SPL_distribution(graph):
 	plt.xticks(fontsize=15)
 	plt.show()
 	
-
 def plot_graph(graph):
 	
 	pos=nx.spring_layout(G)
@@ -119,9 +118,15 @@ def plot_graph(graph):
 #	plt.title("Graphe en position spectral")
 #	plt.axis('off')
 
+def corr_clus_deg(graph){
+	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
+	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
+	print (pearsonr(x,y))
+}
+
+
+
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
-
-
 #mat=alea_mat(1000)
 
 
@@ -150,12 +155,12 @@ G.add_edges_from(liste)
 #print(nx.clustering(G))
 #print(nx.degree(G))
 #print(nx.average_clustering(G))
-x=[nx.clustering(G)[key] for key in nx.clustering(G).keys()]
-y=[nx.degree(G)[key] for key in nx.degree(G).keys()]
-print (pearsonr(x,y))
+
 #print(nx.shortest_path_length(G))
 
 #print(nx.shortest_path_length(G)['5'])
+
+corr_clus_deg(G)
 
 SPL_distribution(G)
 #plt.show()
