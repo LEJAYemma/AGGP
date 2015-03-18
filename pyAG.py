@@ -1,21 +1,30 @@
 from random import *
-
-class te:
+from graph import * 
+import copy
+class individu:
     def __init__(self,ge=None):
 	if ge is None :
-	    self.genome=[randint(0,1) for x in range(2000)]
+	    self.genome=alea_mat(10)
+	    self.graph=nx.from_numpy_matrix(self.genome)
+	    self.fit=-1
 	else:
 	    self.genome=ge[:]
-
+	    self.graph=nx.from_numpy_matrix(self.genome)
+            self.fit=-1
+		
     def fitness(self):
 	r=0
 	g = 0
-	for i,x in enumerate(self.genome):
+	for i,x in enumerate(self.genome[1,:]):
 	    r+= 2*x-1
 	    if i>1000:
 		if r>4 or r<-4:
 		    g+=1
+            
 	return g
+	
+    def maj_graphe(self):
+	self.graph=nx.from_numpy_matrix(self.genome)
 
 
 
@@ -27,14 +36,17 @@ def index(N,x):
 	j+=1
     return j-1
 
-class pyAG:
+class population:
+	
     def __init__(self,N,prod,txMut,txCross):
 	self.N=N
 	self.txMut=txMut
 	self.txCross=txCross
-	self.prod=prod
+        self.prod=prod
 	self.pop=[prod() for i in range(N)]
 	self.gen = 0
+
+	
     def calc_fitness(self):
 	self.f=[]
 	self.fitm=0
@@ -55,26 +67,33 @@ class pyAG:
 	    x=index(self.N,r)
 	    ##print x,self.f[x][0]
 	    self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+
     def mutation(self):
 	for x in self.npop:
-	    g = x.genome
-	    for i in range(len(g)):
-		if random()<self.txMut:
-		    g[i]=1-g[i]
-	    x.genome=g
+            g = x.genome
+            for i in range(len(g[1,:])):
+                for j in range(i+1,len(g[1,:])):
+                    if random()<self.txMut:
+                        g[i+1,j]=1-g[i+1,j]
+            x.genome=copy.deepcopy(g)
+
     def cross(self):
-	for x in self.npop:
-	    if random()<self.txCross:
-		g = x.genome
-		r1= self.pop[randint(0,self.N-1)].genome
-		z= randint(0,len(g)-1)
-		if random()<0.5:
-		    g[0:z]=r1[0:z]
-		else:
-		    g[z:]=r1[z:]
-		x.genome=g
+        for x in self.npop:
+            if random()<self.txCross:
+                g = x.genome
+                r1= self.pop[randint(0,self.N-1)].genome
+                z= randint(0,len(g)-1)
+                if random()<0.5:
+                    g[0:z]=r1[0:z]
+                else:
+                    g[z:]=r1[z:]
+            x.genome=g
+    
     def update(self):
 	self.pop=self.npop[:]
+        for x in self.pop:
+            x.maj_graphe()
+
     def genloop(self):
 	ga.calc_fitness()
 	self.new_pop()
@@ -86,15 +105,17 @@ class pyAG:
 
 seed(11)
 
-ga=pyAG(100,te,0.0001,0.5)
-ga.calc_fitness()
+ga=population(10,individu,0.0001,0.5)
+print ga.pop[1].genome
+ga.genloop()
+print ga.pop[1].genome
 
-for i in range(1000):
-    ga.genloop()
+#for i in range(1000):
+#    ga.genloop()
 
-r=0
-f=open("btr2.dat","w")
-for x in ga.pop[ga.f[0][1]].genome:
-    r+=2*x-1
-    f.write("%d\n"%r)
-f.close()
+#r=0
+#f=open("btr2.dat","w")
+#for x in ga.pop[ga.f[0][1]].genome:
+#    r+=2*x-1
+#    f.write("%d\n"%r)
+#f.close()
