@@ -118,11 +118,12 @@ def plot_graph(graph):
 #	plt.title("Graphe en position spectral")
 #	plt.axis('off')
 
-def corr_clus_deg(graph){
+def corr_clus_deg(graph):
+
 	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
 	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
 	print (pearsonr(x,y))
-}
+
 
 
 
