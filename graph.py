@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from math import *
 from scipy import stats
+from scipy.stats.stats import pearsonr
 
 """
 
@@ -27,12 +28,13 @@ def alea_mat(length):
 def deg_distribution(graph):
 	plt.figure()
 	l_dist={}
-	for key in (nx.degree(graph)):
-		if l_dist.has_key(nx.degree(graph)[key])==True:
-			l_dist[nx.degree(graph)[key]]+=1
+	dico_degre=nx.degree(graph)
+	for key in (dico_degre):
+		if l_dist.has_key(dico_degre[key])==True:
+			l_dist[dico_degre[key]]+=1
 		
 		else :
-			l_dist[nx.degree(graph)[key]]=1
+			l_dist[dico_degre[key]]=1
 		
 	x=range(len(l_dist))
 	y=[l_dist[i] for i in sorted(l_dist)]
@@ -42,6 +44,27 @@ def deg_distribution(graph):
 	plt.title("Distribution des degres des noeuds du graphe")
 
         return ((x,y))
+
+
+def SPL_distribution(graph):
+	plt.figure()
+	l_dist={}
+	liste=[]
+
+	SPLdico=nx.shortest_path_length(graph)
+	for key in (SPLdico):
+		liste.append(SPLdico[key].values())	
+
+	C = [item for sublist in liste for item in sublist]
+	
+	plt.hist(C,histtype='stepfilled',facecolor='green')
+	plt.title('Main Plot Title',fontsize=25,horizontalalignment='right')
+	plt.ylabel('Count',fontsize=20)
+	plt.yticks(fontsize=15)
+	plt.xlabel('X Axis Label',fontsize=20)
+	plt.xticks(fontsize=15)
+	plt.show()
+	
 
 def plot_graph(graph):
 	
@@ -61,15 +84,15 @@ def plot_graph(graph):
 	plt.axis('off')
 	plt.title("Graphe en position spring")
 
-	plt.figure()
+#	plt.figure()
 	# nodes
-	nx.draw_networkx_nodes(G,pos2,node_size=700)
+#	nx.draw_networkx_nodes(G,pos2,node_size=700)
 	# edges
-	nx.draw_networkx_edges(G,pos2,alpha=0.5,edge_color='b')
+#	nx.draw_networkx_edges(G,pos2,alpha=0.5,edge_color='b')
 	# labels
-	nx.draw_networkx_labels(G,pos2,font_size=20,font_family='sans-serif')
-	plt.axis('off')
-	plt.title("Graphe en position circulaire")
+#	nx.draw_networkx_labels(G,pos2,font_size=20,font_family='sans-serif')
+#	plt.axis('off')
+#	plt.title("Graphe en position circulaire")
 
 	# plt.figure()
 	# # nodes
@@ -80,28 +103,47 @@ def plot_graph(graph):
 	# nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
 	# plt.axis('off')
 	# plt.title("Graphe en position random")
-
-	plt.figure()
+#	plt.figure()
 	# nodes
-	nx.draw_networkx_nodes(G,pos4,node_size=700)
+#	nx.draw_networkx_nodes(G,pos3,node_size=700)
 	# edges
-	nx.draw_networkx_edges(G,pos4,alpha=0.5,edge_color='b')
+#	nx.draw_networkx_edges(G,pos3,alpha=0.5,edge_color='b')
 	# labels
-	nx.draw_networkx_labels(G,pos4,font_size=20,font_family='sans-serif')
-	plt.axis('off')
-	plt.title("Graphe en position shell")
+#	nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
+#	plt.axis('off')
+#	plt.title("Graphe en position random")
 
-	plt.figure()
+#	plt.figure()
 	# nodes
-	nx.draw_networkx_nodes(G,pos5,node_size=700)
+#	nx.draw_networkx_nodes(G,pos4,node_size=700)
 	# edges
-	nx.draw_networkx_edges(G,pos5,alpha=0.5,edge_color='b')
+#	nx.draw_networkx_edges(G,pos4,alpha=0.5,edge_color='b')
 	# labels
-	nx.draw_networkx_labels(G,pos5,font_size=20,font_family='sans-serif')
-	plt.title("Graphe en position spectral")
-	plt.axis('off')
+#	nx.draw_networkx_labels(G,pos4,font_size=20,font_family='sans-serif')
+#	plt.axis('off')
+#	plt.title("Graphe en position shell")
+
+#	plt.figure()
+	# nodes
+#	nx.draw_networkx_nodes(G,pos5,node_size=700)
+	# edges
+#	nx.draw_networkx_edges(G,pos5,alpha=0.5,edge_color='b')
+	# labels
+#	nx.draw_networkx_labels(G,pos5,font_size=20,font_family='sans-serif')
+#	plt.title("Graphe en position spectral")
+#	plt.axis('off')
+
+def corr_clus_deg(graph):
+
+	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
+	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
+	print (pearsonr(x,y))
+
+
+
 
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
+
 mat=alea_mat(500)
 #Fait de cette matrice un graph
 G=nx.Graph()
@@ -113,11 +155,21 @@ G.add_edges_from(edges)
 f.close()
 
 
+#mat=alea_mat(1000)
+
+
+#Fait de cette matrice un graph
+#G=nx.from_numpy_matrix(mat)
+
+#G=nx.erdos_renyi_graph(1000,0.5)
+
+
 #calcul et plot la distribution des degrée des noeuds du graph
 #deg_distribution(G)
 
 #Représente le graph avec différentes position pour les noeuds
 #plot_graph(G)
+
 #plt.show() # display
 
 
@@ -141,6 +193,32 @@ def scale_free(G):
 #Test scale-free graphe random
 G2=nx.from_numpy_matrix(mat)
 scale_free(G2)
+
+#display
+
+lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
+liste=[line.split(" ")[0:2] for line in lines]
+
+G=nx.Graph()
+G.add_edges_from(liste)
+
+
+#print (G.number_of_nodes())
+#print (G.number_of_edges())
+
+#print(nx.clustering(G))
+#print(nx.degree(G))
+#print(nx.average_clustering(G))
+
+#print(nx.shortest_path_length(G))
+
+#print(nx.shortest_path_length(G)['5'])
+
+corr_clus_deg(G)
+
+SPL_distribution(G)
+#plt.show()
+
 
 
 
