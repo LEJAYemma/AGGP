@@ -3,6 +3,8 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from math import *
+from scipy import stats
 
 """
 
@@ -39,6 +41,8 @@ def deg_distribution(graph):
 	plt.xticks(range(len(l_dist)), sorted(l_dist))
 	plt.title("Distribution des degres des noeuds du graphe")
 
+        return ((x,y))
+
 def plot_graph(graph):
 	
 	pos=nx.spring_layout(G)
@@ -67,15 +71,15 @@ def plot_graph(graph):
 	plt.axis('off')
 	plt.title("Graphe en position circulaire")
 
-	plt.figure()
-	# nodes
-	nx.draw_networkx_nodes(G,pos3,node_size=700)
-	# edges
-	nx.draw_networkx_edges(G,pos3,alpha=0.5,edge_color='b')
-	# labels
-	nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
-	plt.axis('off')
-	plt.title("Graphe en position random")
+	# plt.figure()
+	# # nodes
+	# nx.draw_networkx_nodes(G,pos3,node_size=700)
+	# # edges
+	# nx.draw_networkx_edges(G,pos3,alpha=0.5,edge_color='b')
+	# # labels
+	# nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
+	# plt.axis('off')
+	# plt.title("Graphe en position random")
 
 	plt.figure()
 	# nodes
@@ -98,14 +102,45 @@ def plot_graph(graph):
 	plt.axis('off')
 
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
-mat=alea_mat(10000)
+mat=alea_mat(500)
 #Fait de cette matrice un graph
-G=nx.from_numpy_matrix(mat)
+G=nx.Graph()
+edges=[]
+f=open('ColiNet-1.0/coliInterNoAutoRegVec.txt','r')
+for line  in f.readlines():
+        edges.append((int(line.split(' ')[0]),int(line.split(' ')[1])))
+G.add_edges_from(edges)
+f.close()
+
 
 #calcul et plot la distribution des degrée des noeuds du graph
-deg_distribution(G)
+#deg_distribution(G)
 
 #Représente le graph avec différentes position pour les noeuds
 #plot_graph(G)
-plt.show() # display
+#plt.show() # display
+
+
+
+#Scale-free
+def scale_free(G):
+        P=nx.degree_histogram(G)
+        x=[]
+        y=[]
+        for k in range(len(P)):
+                if P[k]!=0 :
+                        x.append(log(k))
+                        y.append(log(1.0*P[k]/G.number_of_nodes()))
+        slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
+        print r_value**2 #0.7988
+        print slope #-1.5
+        plt.plot(x,y)
+        plt.show()
+
+
+#Test scale-free graphe random
+G2=nx.from_numpy_matrix(mat)
+scale_free(G2)
+
+
 
