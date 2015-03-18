@@ -45,9 +45,11 @@ def SPL_distribution(graph):
 	plt.figure()
 	l_dist={}
 	liste=[]
+
 	SPLdico=nx.shortest_path_length(graph)
 	for key in (SPLdico):
 		liste.append(SPLdico[key].values())	
+
 	C = [item for sublist in liste for item in sublist]
 	
 	plt.hist(C,histtype='stepfilled',facecolor='green')
@@ -118,7 +120,11 @@ def plot_graph(graph):
 #	plt.axis('off')
 
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
-mat=alea_mat(1000)
+
+
+#mat=alea_mat(1000)
+
+
 #Fait de cette matrice un graph
 #G=nx.from_numpy_matrix(mat)
 
@@ -136,6 +142,7 @@ liste=[line.split(" ")[0:2] for line in lines]
 
 G=nx.Graph()
 G.add_edges_from(liste)
+
 
 #print (G.number_of_nodes())
 #print (G.number_of_edges())
