@@ -68,7 +68,6 @@ def deg_distribution(graph):
 
         return ((x,y))
 
-
 def SPL_distribution(graph):
 	plt.figure()
 	l_dist={}
@@ -90,7 +89,6 @@ def SPL_distribution(graph):
 	print 'normalite : \n',(shapiro(C)),"\n"
 	return (shapiro(C))
 	
-
 def plot_graph(graph):
 	
 	pos=nx.spring_layout(G)
@@ -108,55 +106,6 @@ def plot_graph(graph):
 	nx.draw_networkx_labels(G,pos,font_size=20,font_family='sans-serif')
 	plt.axis('off')
 	plt.title("Graphe en position spring")
-
-#	plt.figure()
-	# nodes
-#	nx.draw_networkx_nodes(G,pos2,node_size=700)
-	# edges
-#	nx.draw_networkx_edges(G,pos2,alpha=0.5,edge_color='b')
-	# labels
-#	nx.draw_networkx_labels(G,pos2,font_size=20,font_family='sans-serif')
-#	plt.axis('off')
-#	plt.title("Graphe en position circulaire")
-
-	# plt.figure()
-	# # nodes
-	# nx.draw_networkx_nodes(G,pos3,node_size=700)
-	# # edges
-	# nx.draw_networkx_edges(G,pos3,alpha=0.5,edge_color='b')
-	# # labels
-	# nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
-	# plt.axis('off')
-	# plt.title("Graphe en position random")
-#	plt.figure()
-	# nodes
-#	nx.draw_networkx_nodes(G,pos3,node_size=700)
-	# edges
-#	nx.draw_networkx_edges(G,pos3,alpha=0.5,edge_color='b')
-	# labels
-#	nx.draw_networkx_labels(G,pos3,font_size=20,font_family='sans-serif')
-#	plt.axis('off')
-#	plt.title("Graphe en position random")
-
-#	plt.figure()
-	# nodes
-#	nx.draw_networkx_nodes(G,pos4,node_size=700)
-	# edges
-#	nx.draw_networkx_edges(G,pos4,alpha=0.5,edge_color='b')
-	# labels
-#	nx.draw_networkx_labels(G,pos4,font_size=20,font_family='sans-serif')
-#	plt.axis('off')
-#	plt.title("Graphe en position shell")
-
-#	plt.figure()
-	# nodes
-#	nx.draw_networkx_nodes(G,pos5,node_size=700)
-	# edges
-#	nx.draw_networkx_edges(G,pos5,alpha=0.5,edge_color='b')
-	# labels
-#	nx.draw_networkx_labels(G,pos5,font_size=20,font_family='sans-serif')
-#	plt.title("Graphe en position spectral")
-#	plt.axis('off')
 
 def corr_clus_deg(graph):
 
@@ -182,11 +131,6 @@ def scale_free(G):
         plt.show()
 
 
-
-
-
-
-
 ############################################################################
 
 
@@ -194,7 +138,6 @@ def scale_free(G):
 
 mat=alea_mat(500)
 mat2=alea_mat2(100)
-
 
 #graphe de reference
 
@@ -206,7 +149,6 @@ G.add_edges_from(liste)
 
 #G=nx.erdos_renyi_graph(1000,0.5)  : random graph
 
-
 #calcul et plot la distribution des degrée des noeuds du graph
 #deg_distribution(G)
 
@@ -215,12 +157,8 @@ G.add_edges_from(liste)
 
 #plt.show() # display
 
-
-
-
 #Fait de cette matrice un graph
 G2=nx.from_numpy_matrix(mat2)
-
 
 #teste le scale free
 scale_free(G)
@@ -228,12 +166,6 @@ scale_free(G)
 corr_clus_deg(G)
 #distribution des shortest path lengths: distribution normale? (shapiro)
 SPL_distribution(G)
-
-
-
-
-
-
 
 #print (G.number_of_nodes())
 #print (G.number_of_edges())
