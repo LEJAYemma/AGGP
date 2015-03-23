@@ -6,6 +6,7 @@ import numpy as np
 from math import *
 from scipy import stats
 from scipy.stats.stats import pearsonr
+from scipy.stats import shapiro
 
 """
 
@@ -18,6 +19,28 @@ n = taille de pop
 c = ]0;1[
 
 """
+
+def alea_mat2(length):
+        liste=[]
+        for i in range(length*length):
+                n=np.random.rand()
+                if n >0.9:
+                        liste.append(1)
+                else:
+                        liste.append(0)
+        
+        matrix=[]
+        while liste!=[]:
+                matrix.append(liste[:length])
+                liste=liste[length:]
+                
+        
+        mat=np.triu(matrix)
+        
+	for j in range(length):
+		mat[j,j]=0
+        print mat
+	return mat
 
 def alea_mat(length):
 	mat=np.triu(np.matrix(np.random.randint(2,size=(length,length))))
@@ -64,6 +87,8 @@ def SPL_distribution(graph):
 	plt.xlabel('X Axis Label',fontsize=20)
 	plt.xticks(fontsize=15)
 	plt.show()
+	print 'normalite : \n',(shapiro(C)),"\n"
+	return (shapiro(C))
 	
 
 def plot_graph(graph):
@@ -137,31 +162,49 @@ def corr_clus_deg(graph):
 
 	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
 	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
-	print (pearsonr(x,y))
+	a,b= pearsonr(x,y)
+	print "correlation clustering avec degres: \n",(a,b),"\n"
+	return (a,b)
+	
+	#Scale-free
+def scale_free(G):
+        P=nx.degree_histogram(G)
+        x=[]
+        y=[]
+        for k in range(len(P)):
+                if P[k]!=0 :
+                        x.append(log(k))
+                        y.append(log(1.0*P[k]/G.number_of_nodes()))
+        slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
+        print "scale free r-value: \n",r_value**2,"\n" #0.7988,
+        print "scale free slope: \n",slope, "\n" #-1.5
+        plt.plot(x,y)
+        plt.show()
 
 
+
+
+
+
+
+############################################################################
 
 
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
 
 mat=alea_mat(500)
-#Fait de cette matrice un graph
+mat2=alea_mat2(100)
+
+
+#graphe de reference
+
+lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
+liste=[line.split(" ")[0:2] for line in lines]
+
 G=nx.Graph()
-edges=[]
-f=open('ColiNet-1.0/coliInterNoAutoRegVec.txt','r')
-for line  in f.readlines():
-        edges.append((int(line.split(' ')[0]),int(line.split(' ')[1])))
-G.add_edges_from(edges)
-f.close()
+G.add_edges_from(liste)
 
-
-#mat=alea_mat(1000)
-
-
-#Fait de cette matrice un graph
-#G=nx.from_numpy_matrix(mat)
-
-#G=nx.erdos_renyi_graph(1000,0.5)
+#G=nx.erdos_renyi_graph(1000,0.5)  : random graph
 
 
 #calcul et plot la distribution des degrée des noeuds du graph
@@ -174,33 +217,22 @@ f.close()
 
 
 
-#Scale-free
-def scale_free(G):
-        P=nx.degree_histogram(G)
-        x=[]
-        y=[]
-        for k in range(len(P)):
-                if P[k]!=0 :
-                        x.append(log(k))
-                        y.append(log(1.0*P[k]/G.number_of_nodes()))
-        slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
-        print r_value**2 #0.7988
-        print slope #-1.5
-        plt.plot(x,y)
-        plt.show()
+
+#Fait de cette matrice un graph
+G2=nx.from_numpy_matrix(mat2)
 
 
-#Test scale-free graphe random
-G2=nx.from_numpy_matrix(mat)
-scale_free(G2)
+#teste le scale free
+scale_free(G)
+#teste si le coeff de clusterinf est dependant du degré
+corr_clus_deg(G)
+#distribution des shortest path lengths: distribution normale? (shapiro)
+SPL_distribution(G)
 
-#display
 
-lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
-liste=[line.split(" ")[0:2] for line in lines]
 
-G=nx.Graph()
-G.add_edges_from(liste)
+
+
 
 
 #print (G.number_of_nodes())
@@ -214,9 +246,6 @@ G.add_edges_from(liste)
 
 #print(nx.shortest_path_length(G)['5'])
 
-corr_clus_deg(G)
-
-SPL_distribution(G)
 #plt.show()
 
 
