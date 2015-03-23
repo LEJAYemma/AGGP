@@ -39,7 +39,7 @@ def alea_mat2(length):
         
 	for j in range(length):
 		mat[j,j]=0
-        print mat
+	#print mat
 	return mat
 
 def alea_mat(length):
@@ -130,7 +130,23 @@ def scale_free(G):
         plt.plot(x,y)
         plt.show()
 
-
+def small_word(graph,coeff_SPL,coeff_connectivite):
+	assert (coeff_SPL + coeff_connectivite == 1),"Coefficient sum not equal to 1"
+	clus=int(nx.is_connected(graph))	
+	if clus==1:
+		ASPL=nx.average_shortest_path_length(graph)
+	else :
+		liste_ASPL=[]
+		liste_nb_edges=[]
+		for g in nx.connected_component_subgraphs(G):
+			liste_ASPL.append(nx.average_shortest_path_length(g))
+			liste_nb_edges.append(g.number_of_edges())
+		ASPL=np.average(a=liste_ASPL,weights=liste_nb_edges)
+	res=coeff_SPL*ASPL + coeff_connectivite*clus*1.0
+	print "Coeff small world ",res
+	return (res)
+	
+	
 ############################################################################
 
 
@@ -179,7 +195,8 @@ SPL_distribution(G)
 #print(nx.shortest_path_length(G)['5'])
 
 #plt.show()
-
-
-
+print("Graph aleatoire")
+small_word(G2,0.5,0.5)
+print("Graph biologique")
+small_word(G,0.5,0.5)
 
