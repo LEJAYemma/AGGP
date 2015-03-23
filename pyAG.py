@@ -13,15 +13,19 @@ class individu:
             self.fit=-1
 		
     def fitness(self):
-	r=0
-	g = 0
-	for i,x in enumerate(self.genome[1,:]):
-	    r+= 2*x-1
-	    if i>1000:
-		if r>4 or r<-4:
-		    g+=1
-            
-	return g
+        
+        graph=self.graph
+        fit = 0
+        fit += SPL_distribution(graph)[1,0]*10
+	#r=0
+	#g = 0
+	#for i,x in enumerate(self.genome[1,:]):
+	#    r+= 2*x-1
+	#    if i>1000:
+	#	if r>4 or r<-4:
+	#	    g+=1
+ #           
+	#return g
 	
     def maj_graphe(self):
 	self.graph=nx.from_numpy_matrix(self.genome)
