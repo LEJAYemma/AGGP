@@ -4,7 +4,7 @@ import copy
 class individu:
     def __init__(self,ge=None):
 	if ge is None :
-	    self.genome=alea_mat(10)
+	    self.genome=alea_mat2(100)
 	    self.graph=nx.from_numpy_matrix(self.genome)
 	    self.fit=-1
 	else:
@@ -16,7 +16,9 @@ class individu:
         
         graph=self.graph
         fit = 0
-        fit += SPL_distribution(graph)[1,0]*10
+        fit += SPL_distribution(graph)[0]*10
+        fit += small_word(graph,0.8,0.2) *10
+        fit -= corr_clus_deg(graph)[0] *10
 	#r=0
 	#g = 0
 	#for i,x in enumerate(self.genome[1,:]):
@@ -26,6 +28,7 @@ class individu:
 	#	    g+=1
  #           
 	#return g
+        return fit
 	
     def maj_graphe(self):
 	self.graph=nx.from_numpy_matrix(self.genome)
@@ -109,10 +112,10 @@ class population:
 
 seed(11)
 
-ga=population(10,individu,0.0001,0.5)
-print ga.pop[1].genome
-ga.genloop()
-print ga.pop[1].genome
+#ga=population(10,individu,0.0001,0.5)
+#print ga.pop[1].genome
+#ga.genloop()
+#print ga.pop[1].genome
 
 #for i in range(1000):
 #    ga.genloop()
@@ -123,3 +126,23 @@ print ga.pop[1].genome
 #    r+=2*x-1
 #    f.write("%d\n"%r)
 #f.close()
+
+
+## Ca c'est juste pour tester la fitness sur 1 individu
+## et voir comment elle evolue sur 1 pas de temps
+copain =individu()
+g = copain.genome
+print g
+#plot_graph(copain.graph)
+print copain.fitness()
+
+
+for i in range(len(g[1,:])):
+    for j in range(i+2,len(g[1,:])):
+        if random()<0.5:
+            g[i+1,j]=1-g[i+1,j]
+copain.genome=copy.deepcopy(g)
+copain.maj_graphe()
+print copain.genome
+
+print copain.fitness()
