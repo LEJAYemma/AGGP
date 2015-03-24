@@ -49,7 +49,7 @@ def alea_mat(length):
 	return mat
 	
 def deg_distribution(graph):
-	plt.figure()
+	#plt.figure()
 	l_dist={}
 	dico_degre=nx.degree(graph)
 	for key in (dico_degre):
@@ -62,14 +62,14 @@ def deg_distribution(graph):
 	x=range(len(l_dist))
 	y=[l_dist[i] for i in sorted(l_dist)]
 
-	plt.bar(x, y, align='center')
-	plt.xticks(range(len(l_dist)), sorted(l_dist))
-	plt.title("Distribution des degres des noeuds du graphe")
+	#plt.bar(x, y, align='center')
+	#plt.xticks(range(len(l_dist)), sorted(l_dist))
+	#plt.title("Distribution des degres des noeuds du graphe")
 
         return ((x,y))
 
 def SPL_distribution(graph):
-	plt.figure()
+	#plt.figure()
 	l_dist={}
 	liste=[]
 
@@ -79,17 +79,17 @@ def SPL_distribution(graph):
 
 	C = [item for sublist in liste for item in sublist]
 	
-	plt.hist(C,histtype='stepfilled',facecolor='green')
-	plt.title('Main Plot Title',fontsize=25,horizontalalignment='right')
-	plt.ylabel('Count',fontsize=20)
-	plt.yticks(fontsize=15)
-	plt.xlabel('X Axis Label',fontsize=20)
-	plt.xticks(fontsize=15)
-	plt.show()
-	print 'normalite : \n',(shapiro(C)),"\n"
+	#plt.hist(C,histtype='stepfilled',facecolor='green')
+	#plt.title('Main Plot Title',fontsize=25,horizontalalignment='right')
+	#plt.ylabel('Count',fontsize=20)
+	#plt.yticks(fontsize=15)
+	#plt.xlabel('X Axis Label',fontsize=20)
+	#plt.xticks(fontsize=15)
+	#plt.show()
+	#print 'normalite : \n',(shapiro(C)),"\n"
 	return (shapiro(C))
 	
-def plot_graph(graph):
+def plot_graph(G):
 	
 	pos=nx.spring_layout(G)
 	pos2=nx.circular_layout(G)
@@ -106,14 +106,16 @@ def plot_graph(graph):
 	nx.draw_networkx_labels(G,pos,font_size=20,font_family='sans-serif')
 	plt.axis('off')
 	plt.title("Graphe en position spring")
+        plt.show()
 
 def corr_clus_deg(graph):
 
 	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
+        #print x
 	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
-	a,b= pearsonr(x,y)
-	print "correlation clustering avec degres: \n",(a,b),"\n"
-	return (a,b)
+	#a,b= pearsonr(x,y)
+	#print pearsonr(x,y)#print "correlation clustering avec degres: \n",(a,b),"\n"
+	return pearsonr(x,y)
 	
 	#Scale-free
 def scale_free(G):
@@ -127,8 +129,9 @@ def scale_free(G):
         slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
         print "scale free r-value: \n",r_value**2,"\n" #0.7988,
         print "scale free slope: \n",slope, "\n" #-1.5
-        plt.plot(x,y)
-        plt.show()
+        #plt.plot(x,y)
+        #plt.show()
+        return r_value**2
 
 def small_word(graph,coeff_SPL,coeff_connectivite):
 	assert (coeff_SPL + coeff_connectivite == 1),"Coefficient sum not equal to 1"
@@ -143,7 +146,7 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
 			liste_nb_edges.append(g.number_of_edges())
 		ASPL=np.average(a=liste_ASPL,weights=liste_nb_edges)
 	res=coeff_SPL*ASPL + coeff_connectivite*clus*1.0
-	print "Coeff small world ",res
+	#print "Coeff small world ",res
 	return (res)
 	
 	
@@ -174,14 +177,14 @@ G.add_edges_from(liste)
 #plt.show() # display
 
 #Fait de cette matrice un graph
-G2=nx.from_numpy_matrix(mat2)
+#G2=nx.from_numpy_matrix(mat2)
 
 #teste le scale free
-scale_free(G)
+#scale_free(G)
 #teste si le coeff de clusterinf est dependant du degré
-corr_clus_deg(G)
+#corr_clus_deg(G)
 #distribution des shortest path lengths: distribution normale? (shapiro)
-SPL_distribution(G)
+#SPL_distribution(G)
 
 #print (G.number_of_nodes())
 #print (G.number_of_edges())
@@ -195,8 +198,8 @@ SPL_distribution(G)
 #print(nx.shortest_path_length(G)['5'])
 
 #plt.show()
-print("Graph aleatoire")
-small_word(G2,0.5,0.5)
-print("Graph biologique")
-small_word(G,0.5,0.5)
+#print("Graph aleatoire")
+#small_word(G2,0.5,0.5)
+#print("Graph biologique")
+#small_word(G,0.5,0.5)
 

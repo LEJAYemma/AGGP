@@ -1,6 +1,11 @@
 from random import *
 from graph import * 
-import copy
+from copy import deepcopy
+import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+from pylab import *
+
 class individu:
     def __init__(self,ge=None):
 	if ge is None :
@@ -56,24 +61,29 @@ class population:
 	
     def calc_fitness(self):
 	self.f=[]
-	self.fitm=0
-	self.fim=1000
-	for i,x in enumerate(self.pop):
+	self.fitm=0 ## moyenne
+	self.fim=1000 ## min
+ 	for i,x in enumerate(self.pop):
 	    fi=x.fitness()
 	    self.fitm += fi
 	    if self.fim>fi:
 		self.fim=fi
 	    self.f.append([fi,i])
 	self.f.sort()
+        print "F",self.f
 	self.fitm/=1.0*self.N
 	
     def new_pop(self):
 	self.npop=[]
-	for i in range(self.N):
-	    r= randint(0,(self.N+1)*(self.N)/2)
-	    x=index(self.N,r)
-	    ##print x,self.f[x][0]
-	    self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+	for x in range(self.N/2,self.N):
+            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+           # self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
+           # self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
+	    #r= randint(0,(self.N+1)*(self.N)/2)
+	    #x=index(self.N,r)
+	    #print x,self.f[x][0]
+	    #self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
 
     def mutation(self):
 	for x in self.npop:
@@ -82,7 +92,7 @@ class population:
                 for j in range(i+1,len(g[1,:])):
                     if random()<self.txMut:
                         g[i+1,j]=1-g[i+1,j]
-            x.genome=copy.deepcopy(g)
+            x.genome=deepcopy(g)
 
     def cross(self):
         for x in self.npop:
@@ -94,10 +104,12 @@ class population:
                     g[0:z]=r1[0:z]
                 else:
                     g[z:]=r1[z:]
-            x.genome=g
+                x.genome=g
     
     def update(self):
+        print len(self.pop)
 	self.pop=self.npop[:]
+        print len(self.pop)
         for x in self.pop:
             x.maj_graphe()
 
@@ -109,16 +121,22 @@ class population:
 	self.update()
 	self.gen += 1
 	print self.fitm,self.fim
+        
 
-seed(11)
 
-#ga=population(10,individu,0.0001,0.5)
-#print ga.pop[1].genome
-#ga.genloop()
-#print ga.pop[1].genome
+nb_iter=30
+seed()
+y=[]
+ga=population(10,individu,0.01,0.1)
+print ga.pop[1].genome
+ga.genloop()
+print ga.pop[1].genome
 
-#for i in range(1000):
-#    ga.genloop()
+for i in range(nb_iter):
+    ga.genloop()
+    y.append(ga.fitm)
+    
+y=np.asarray(y)
 
 #r=0
 #f=open("btr2.dat","w")
@@ -130,19 +148,42 @@ seed(11)
 
 ## Ca c'est juste pour tester la fitness sur 1 individu
 ## et voir comment elle evolue sur 1 pas de temps
-copain =individu()
-g = copain.genome
-print g
-#plot_graph(copain.graph)
-print copain.fitness()
+# copain =individu()
+# g = copain.genome
+# print g
+# plot_graph(copain.graph)
+# print copain.fitness()
 
 
-for i in range(len(g[1,:])):
-    for j in range(i+2,len(g[1,:])):
-        if random()<0.5:
-            g[i+1,j]=1-g[i+1,j]
-copain.genome=copy.deepcopy(g)
-copain.maj_graphe()
-print copain.genome
+# for i in range(len(g[1,:])):
+#     for j in range(i+2,len(g[1,:])):
+#         if random()<0.5:
+#             g[i+1,j]=1-g[i+1,j]
+# copain.genome=copy.deepcopy(g)
+# copain.maj_graphe()
+# print copain.genome
 
-print copain.fitness()
+# print copain.fitness()
+
+lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
+liste=[line.split(" ")[0:2] for line in lines]
+
+G=nx.Graph()
+G.add_edges_from(liste)
+matrix=nx.to_numpy_matrix(G)
+copain2=individu(matrix)
+print "fit ECOLI:",copain2.fitness()
+
+
+
+#fig = plt.figure()
+
+x=np.arange(0,nb_iter,1)
+print x,y
+
+plot(x,y)
+    
+title("evolution de la fitness moyenne")
+xlabel("nombre d'iterations")
+ylabel("distance totale")
+show()
