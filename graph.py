@@ -7,6 +7,7 @@ from math import *
 from scipy import stats
 from scipy.stats.stats import pearsonr
 from scipy.stats import shapiro
+from pylab import *
 
 """
 
@@ -40,9 +41,9 @@ c = ]0;1[
                 
 #         mat=np.triu(matrix)
         
-#         for j in range(length):
-#                 mat[j,j]=0
-                
+    #         for j in range(length):
+    #                 mat[j,j]=0
+                    
 #                 #sum_mat=np.matrix.sum(np.matrix(mat))
 # 	print mat
 # 	return mat
@@ -50,12 +51,26 @@ c = ]0;1[
 
 
 def alea_mat(length):
-	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.9,0.1])))
+	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.95,0.05])))
 	for i in range(length):
 		mat[i,i]=0
         graph=nx.from_numpy_matrix(mat)
-        connected_comp=nx.connected_component_subgraphs(graph)
-        print "nombre de connex", connected_comp
+        connected_comp=list(nx.connected_component_subgraphs(graph))
+        print len(connected_comp)
+        print mat
+        nodes=[]
+        for j in range(len(connected_comp)-1):
+            print connected_comp[j].nodes()
+            nodes.append((connected_comp[j].nodes()[0],connected_comp[j+1].nodes()[0]))
+            
+        graph.add_edges_from(nodes)
+        mat=nx.to_numpy_matrix(graph)
+        print nx.is_connected(graph)
+        
+            
+            #nx.to_numpy_matrix(connected_comp[j])
+            
+        #print "nombre de connex", len(connected_comp)
                 
 	return mat
 	
@@ -120,15 +135,38 @@ def plot_graph(G):
         plt.show()
 
 def corr_clus_deg(graph):
-        clust=nx.clustering(graph)
-        degree=nx.degree(graph)
-	x=[clust[key] for key in clust.keys()]
-	y=[degree[key] for key in degree.keys()]
+    
+        dic={}
+        #print nx.degree(graph)
+        #for i in range(len(nx.degree(graph))):
+        #    for x in range(G.number_of_nodes()):
+        #        liste=[]
+        #        if G.degree(graph.nodes(x))==i:
+        #            liste.append(G.degree(graph.nodes(x)))              
+        #    dic[i]=nx.average_clustering(liste)
+            
+        liste=[]
+        print nx.degree(graph)
+        for j in range(len(nx.degree(graph))):
+            liste.append([i for i in graph.nodes() if graph.degree(i)==j])
+            print "liste[j]:",liste[j],"\n"
+            #dic[j]=nx.average_clustering(graph,liste[j])
+        ##print list
+        #
+        x= dic.keys()
+        y=dic.values()
+        print x,y
+        plot(x,y)
+        show() 
+        ##clust=nx.clustering(graph)
+        #degree=nx.degree(graph)
+	#x=[clust[key] for key in clust.keys()]
+	#y=[degree[key] for key in degree.keys()]
 	#a,b= pearsonr(x,y)
 	#print "coeff pearson",pearsonr(x,y)
         #print "correlation clustering avec degres: \n",(a,b),"\n"
-	return pearsonr(x,y)
-	
+	#return pearsonr(x,y)
+	return 1
 	#Scale-free
 def scale_free(G):
         P=nx.degree_histogram(G)
@@ -136,12 +174,12 @@ def scale_free(G):
         y=[]
         nb_nodes=G.number_of_nodes()
         for k in range(len(P)):
-                if P[k]!=0 :
+                if P[k]!=0 and k!=0:
                         x.append(log(k))
                         y.append(log(1.0*P[k]/nb_nodes))
         slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
-        print "scale free r-value: \n",r_value**2,"\n" #0.7988,
-        print "scale free slope: \n",slope, "\n" #-1.5
+        #print "scale free r-value: \n",r_value**2,"\n" #0.7988,
+        #print "scale free slope: \n",slope, "\n" #-1.5
         #plt.plot(x,y)
         #plt.show()
         return r_value**2-0.1*abs(1.5+slope)
@@ -223,11 +261,11 @@ G.add_edges_from(liste)
 #print("Graph biologique")
 #small_word(G,0.5,0.5)
 
-print("Description du graph biologique")
-print "Nombre de noeuds : ",G.number_of_nodes()
-print "Nombre de liens : ",G.number_of_edges()
-print "Est-il connexe ? ",nx.is_connected(G)
-print "Nombre de composante connexe : ",nx.number_connected_components(G),"\n"
+#print("Description du graph biologique")
+#print "Nombre de noeuds : ",G.number_of_nodes()
+#print "Nombre de liens : ",G.number_of_edges()
+#print "Est-il connexe ? ",nx.is_connected(G)
+#print "Nombre de composante connexe : ",nx.number_connected_components(G),"\n"
 
 connected_subgraph=nx.connected_component_subgraphs(G)
 i=1
@@ -241,13 +279,13 @@ for graph in connected_subgraph:
 	#print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
 	i+=1
 
-print "Conclusion il faut prendre le plus grand des sous-graph connexe biologique pour faire notre modele"
+#print "Conclusion il faut prendre le plus grand des sous-graph connexe biologique pour faire notre modele"
 
-deg_distribution(Gbis)
-SPL_distribution(Gbis)
-corr_clus_deg(Gbis)
-scale_free(Gbis)
-small_word(Gbis,0.5,0.5)
+#deg_distribution(Gbis)
+#SPL_distribution(Gbis)
+#corr_clus_deg(Gbis)
+#scale_free(Gbis)
+#small_word(Gbis,0.5,0.5)
 
 #plt.show()
 
