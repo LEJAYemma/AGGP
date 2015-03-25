@@ -20,32 +20,43 @@ c = ]0;1[
 
 """
 
-def alea_mat2(length):
-        liste=[]
-        for i in range(length*length):
-                n=np.random.rand()
-                if n >0.99:
-                        liste.append(1)
-                else:
-                        liste.append(0)
-        
-        matrix=[]
-        while liste!=[]:
-                matrix.append(liste[:length])
-                liste=liste[length:]
+# def alea_mat2(length):
+#         liste=[]
+#         # sum_mat=0
+#         # while sum_mat==0:
+#         for i in range(length*length):
+#                 n=np.random.rand()
+#                 if n >0.99:
+#                         liste.append(1)
+#                 else:
+#                         liste.append(0)
                 
+#         matrix=[]
+#         #matrix=np.matrix(liste)
+#         while liste!=[]:
+#                 matrix.append(liste[:length])
+#                 liste=liste[length:]
+                
+                
+#         mat=np.triu(matrix)
         
-        mat=np.triu(matrix)
-        
-	for j in range(length):
-		mat[j,j]=0
-	#print mat
-	return mat
+#         for j in range(length):
+#                 mat[j,j]=0
+                
+#                 #sum_mat=np.matrix.sum(np.matrix(mat))
+# 	print mat
+# 	return mat
+
+
 
 def alea_mat(length):
-	mat=np.triu(np.matrix(np.random.randint(2,size=(length,length))))
+	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.9,0.1])))
 	for i in range(length):
 		mat[i,i]=0
+        graph=nx.from_numpy_matrix(mat)
+        connected_comp=nx.connected_component_subgraphs(graph)
+        print "nombre de connex", connected_comp
+                
 	return mat
 	
 def deg_distribution(graph):
@@ -109,12 +120,13 @@ def plot_graph(G):
         plt.show()
 
 def corr_clus_deg(graph):
-
-	x=[nx.clustering(graph)[key] for key in nx.clustering(graph).keys()]
-        #print x
-	y=[nx.degree(graph)[key] for key in nx.degree(graph).keys()]
+        clust=nx.clustering(graph)
+        degree=nx.degree(graph)
+	x=[clust[key] for key in clust.keys()]
+	y=[degree[key] for key in degree.keys()]
 	#a,b= pearsonr(x,y)
-	#print pearsonr(x,y)#print "correlation clustering avec degres: \n",(a,b),"\n"
+	#print "coeff pearson",pearsonr(x,y)
+        #print "correlation clustering avec degres: \n",(a,b),"\n"
 	return pearsonr(x,y)
 	
 	#Scale-free
@@ -122,16 +134,17 @@ def scale_free(G):
         P=nx.degree_histogram(G)
         x=[]
         y=[]
+        nb_nodes=G.number_of_nodes()
         for k in range(len(P)):
                 if P[k]!=0 :
                         x.append(log(k))
-                        y.append(log(1.0*P[k]/G.number_of_nodes()))
+                        y.append(log(1.0*P[k]/nb_nodes))
         slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
         print "scale free r-value: \n",r_value**2,"\n" #0.7988,
         print "scale free slope: \n",slope, "\n" #-1.5
         #plt.plot(x,y)
         #plt.show()
-        return r_value**2
+        return r_value**2-0.1*abs(1.5+slope)
 
 def small_word(graph,coeff_SPL,coeff_connectivite):
 	assert (coeff_SPL + coeff_connectivite == 1),"Coefficient sum not equal to 1"
@@ -141,11 +154,18 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
 	else :
 		liste_ASPL=[]
 		liste_nb_edges=[]
-		for g in nx.connected_component_subgraphs(G):
-			liste_ASPL.append(nx.average_shortest_path_length(g))
-			liste_nb_edges.append(g.number_of_edges())
+                connected_comp=nx.connected_component_subgraphs(graph)
+                
+		for g in connected_comp:
+                        if g.number_of_nodes()==1:
+                                liste_ASPL.append(0)
+                                liste_nb_edges.append(0)
+                        else:
+                                liste_ASPL.append(nx.average_shortest_path_length(g))
+                                liste_nb_edges.append(g.number_of_edges())
 		ASPL=np.average(a=liste_ASPL,weights=liste_nb_edges)
 	res=coeff_SPL*ASPL + coeff_connectivite*clus*1.0
+        
 	#print "Coeff small world ",res
 	return (res)
 	
@@ -156,7 +176,7 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
 
 mat=alea_mat(500)
-mat2=alea_mat2(100)
+#mat2=alea_mat2(100)
 
 #graphe de reference
 
