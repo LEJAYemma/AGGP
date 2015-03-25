@@ -223,3 +223,32 @@ G.add_edges_from(liste)
 #print("Graph biologique")
 #small_word(G,0.5,0.5)
 
+print("Description du graph biologique")
+print "Nombre de noeuds : ",G.number_of_nodes()
+print "Nombre de liens : ",G.number_of_edges()
+print "Est-il connexe ? ",nx.is_connected(G)
+print "Nombre de composante connexe : ",nx.number_connected_components(G),"\n"
+
+connected_subgraph=nx.connected_component_subgraphs(G)
+i=1
+for graph in connected_subgraph:
+	if i==1:
+		Gbis=graph.copy()
+	#print "Description du sous-graph biologique ",i
+	#print "Nombre de noeuds : ",graph.number_of_nodes()
+	#print "Nombre de liens : ",graph.number_of_edges()
+	#print "Est-il connexe ? ",nx.is_connected(graph)
+	#print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
+	i+=1
+
+print "Conclusion il faut prendre le plus grand des sous-graph connexe biologique pour faire notre modele"
+
+deg_distribution(Gbis)
+SPL_distribution(Gbis)
+corr_clus_deg(Gbis)
+scale_free(Gbis)
+small_word(Gbis,0.5,0.5)
+
+#plt.show()
+
+
