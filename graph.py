@@ -24,7 +24,7 @@ def alea_mat2(length):
         liste=[]
         for i in range(length*length):
                 n=np.random.rand()
-                if n >0.9:
+                if n >0.99:
                         liste.append(1)
                 else:
                         liste.append(0)

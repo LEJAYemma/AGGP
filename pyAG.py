@@ -124,19 +124,24 @@ class population:
         
 
 
-nb_iter=30
+nb_iter=100
 seed()
 y=[]
 ga=population(10,individu,0.01,0.1)
-print ga.pop[1].genome
-ga.genloop()
-print ga.pop[1].genome
+for i in range(10):
+    y.append(ga.pop[i].fitness())
+    print ga.pop[i].genome
 
-for i in range(nb_iter):
-    ga.genloop()
-    y.append(ga.fitm)
+print y
+#print ga.pop[1].genome
+#ga.genloop()
+#print ga.pop[1].genome
+
+# for i in range(nb_iter):
+#     ga.genloop()
+#     y.append(ga.fitm)
     
-y=np.asarray(y)
+# y=np.asarray(y)
 
 #r=0
 #f=open("btr2.dat","w")
@@ -146,24 +151,8 @@ y=np.asarray(y)
 #f.close()
 
 
-## Ca c'est juste pour tester la fitness sur 1 individu
-## et voir comment elle evolue sur 1 pas de temps
-# copain =individu()
-# g = copain.genome
-# print g
-# plot_graph(copain.graph)
-# print copain.fitness()
 
 
-# for i in range(len(g[1,:])):
-#     for j in range(i+2,len(g[1,:])):
-#         if random()<0.5:
-#             g[i+1,j]=1-g[i+1,j]
-# copain.genome=copy.deepcopy(g)
-# copain.maj_graphe()
-# print copain.genome
-
-# print copain.fitness()
 
 lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
 liste=[line.split(" ")[0:2] for line in lines]
@@ -175,15 +164,14 @@ copain2=individu(matrix)
 print "fit ECOLI:",copain2.fitness()
 
 
-
 #fig = plt.figure()
 
-x=np.arange(0,nb_iter,1)
-print x,y
+# x=np.arange(0,nb_iter,1)
+# print x,y
 
-plot(x,y)
+# plot(x,y)
     
-title("evolution de la fitness moyenne")
-xlabel("nombre d'iterations")
-ylabel("distance totale")
-show()
+# title("evolution de la fitness moyenne")
+# xlabel("nombre d'iterations")
+# ylabel("fitness")
+# show()
