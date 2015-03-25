@@ -23,8 +23,8 @@ class individu:
         fit = 0
         fit += SPL_distribution(self.graph)[0]*10
         fit += small_word(self.graph,0.8,0.2) *10
-        fit -= corr_clus_deg(self.graph)[0] *10
-        #fit += scale_free(self.graph)*10
+        fit += corr_clus_deg(self.graph)*100
+        fit += scale_free(self.graph)*100
 	#r=0
 	#g = 0
 	#for i,x in enumerate(self.genome[1,:]):
@@ -70,30 +70,33 @@ class population:
 	    if self.fim>fi:
 		self.fim=fi
 	    self.f.append([fi,i])
-	self.f.sort(reverse=True)
-        print "F",self.f
+	self.f.sort()
+        #self.f.sort(reverse=True)
+        #print "F",self.f
 	self.fitm/=1.0*self.N
 	
     def new_pop(self):
 	self.npop=[]
-	for x in range(self.N):
-            # self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
-            # self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
-            # self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
-            # self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
-	    r= randint(0,(self.N+1)*(self.N)/2)
-	    x=index(self.N,r)
+	for x in range(self.N/2,self.N):
+            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+            #self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
+            #self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
+	    #r= randint(0,(self.N+1)*(self.N)/2)
+	    #x=index(self.N,r)
 	    #print x,self.f[x][0]
-	    self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+	    #self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
 
     def mutation(self):
 	for x in self.npop:
-            g = x.genome
-            for i in range(len(g[1,:])):
-                for j in range(i+1,len(g[1,:])):
+            g = deepcopy(x.genome)
+            for i in range(len(g)):
+                for j in range(i+1,len(g)):
                     if random()<self.txMut:
                         g[i+1,j]=1-g[i+1,j]
+    
             x.genome=deepcopy(g)
+        
 
     def cross(self):
         for x in self.npop:
@@ -119,6 +122,7 @@ class population:
 	self.cross()
 	self.update()
 	self.gen += 1
+        #print self.pop[1].genome
 	print self.fitm,self.fim
         
 
@@ -126,7 +130,7 @@ class population:
 nb_iter=20
 seed()
 y=[]
-ga=population(10,individu,0.001,0.01)
+ga=population(100,individu,0.01,0.0)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())

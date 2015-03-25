@@ -56,16 +56,16 @@ def alea_mat(length):
 		mat[i,i]=0
         graph=nx.from_numpy_matrix(mat)
         connected_comp=list(nx.connected_component_subgraphs(graph))
-        print len(connected_comp)
-        print mat
+        #print len(connected_comp)
+        #print mat
         nodes=[]
         for j in range(len(connected_comp)-1):
-            print connected_comp[j].nodes()
+            #print connected_comp[j].nodes()
             nodes.append((connected_comp[j].nodes()[0],connected_comp[j+1].nodes()[0]))
             
         graph.add_edges_from(nodes)
         mat=nx.to_numpy_matrix(graph)
-        print nx.is_connected(graph)
+        #print nx.is_connected(graph)
         
             
             #nx.to_numpy_matrix(connected_comp[j])
@@ -145,20 +145,24 @@ def corr_clus_deg(graph):
         #            liste.append(G.degree(graph.nodes(x)))              
         #    dic[i]=nx.average_clustering(liste)
             
-        liste=[]
-        print nx.degree(graph)
-        for j in range(len(nx.degree(graph))):
-            liste.append([i for i in graph.nodes() if graph.degree(i)==j])
-            print "liste[j]:",liste[j],"\n"
-            #dic[j]=nx.average_clustering(graph,liste[j])
-        ##print list
-        #
+        # liste=[]
+        #print "graph.degree():",graph.degree()
+        # #print "graph.degree(2):",graph.degree(2)
+        for j in sort(list(set(graph.degree().values()))):
+        #         # liste.append([i for i in graph.nodes() if graph.degree(i)==j])
+        #         # print "liste[",j,"]:",liste[j-1],"\n"
+        #         # dic[j]=nx.average_clustering(graph,liste[j-1])
+                 dic[j]=mean(nx.clustering(graph,[i for i in graph.nodes() if graph.degree(i)==j]).values())
+
         x= dic.keys()
         y=dic.values()
-        print x,y
-        plot(x,y)
-        show() 
-        ##clust=nx.clustering(graph)
+        #print "dic.keys", x
+        #print "dic.values",y
+        #plot(x,y)
+        #show() 
+        slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
+
+        #print nx.clustering(graph)
         #degree=nx.degree(graph)
 	#x=[clust[key] for key in clust.keys()]
 	#y=[degree[key] for key in degree.keys()]
@@ -166,7 +170,10 @@ def corr_clus_deg(graph):
 	#print "coeff pearson",pearsonr(x,y)
         #print "correlation clustering avec degres: \n",(a,b),"\n"
 	#return pearsonr(x,y)
-	return 1
+	
+        return r_value**2-0.05*abs(1-slope)
+
+
 	#Scale-free
 def scale_free(G):
         P=nx.degree_histogram(G)
