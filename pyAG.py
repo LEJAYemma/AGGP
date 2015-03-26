@@ -22,9 +22,10 @@ class individu:
         
         fit = 0
         fit += SPL_distribution(self.graph)[0]*10
-        fit += small_word(self.graph,0.8,0.2) *10
-        fit += corr_clus_deg(self.graph)*100
-        fit += scale_free(self.graph)*100
+        #fit += small_word(self.graph,0.8,0.2) *10
+        fit += nx.is_connected(self.graph)*20
+        fit += corr_clus_deg(self.graph)*10
+        fit += scale_free(self.graph)*10
 	#r=0
 	#g = 0
 	#for i,x in enumerate(self.genome[1,:]):
@@ -123,14 +124,14 @@ class population:
 	self.update()
 	self.gen += 1
         #print self.pop[1].genome
-	print self.fitm,self.fim
-        
+	print self.fitm,self.fim,'\n',[nx.is_connected(self.pop[i].graph) for i in range(len(self.pop))]
+        print [nx.number_of_edges(self.pop[i].graph)*2.0/10000 for i in range(len(self.pop))]
 
 
 nb_iter=20
 seed()
 y=[]
-ga=population(100,individu,0.01,0.0)
+ga=population(100,individu,0.005,0.05)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())

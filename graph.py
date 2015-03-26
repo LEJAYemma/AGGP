@@ -154,13 +154,24 @@ def corr_clus_deg(graph):
         #         # dic[j]=nx.average_clustering(graph,liste[j-1])
                  dic[j]=mean(nx.clustering(graph,[i for i in graph.nodes() if graph.degree(i)==j]).values())
 
-        x= dic.keys()
-        y=dic.values()
-        #print "dic.keys", x
-        #print "dic.values",y
-        #plot(x,y)
-        #show() 
-        slope,intercept,r_value,p_value, std_err=stats.linregress(x,y)
+        #x= dic.keys()
+        x=np.arange(2,9,1)
+        y=dic.values()[1:8]
+        #print "x:",x,"\n","y:",y,"\n"
+        #plt.figure()
+        y2=[]
+        x2=[]
+                
+        
+        for k in range(2,9):
+                if y[k-2]!=0 and k!=0:
+                    x2.append(k)
+                    y2.append(1.0/y[k-2])
+        #print "x2:",x2,"\n","y2:",y2,"\n"
+        #plot(x,y2)
+        #show()
+        slope,intercept,r_value,p_value, std_err=stats.linregress(x2,y2)
+        #print "r_value**2: ",r_value**2,"\n","slope: ",slope,"\n"
 
         #print nx.clustering(graph)
         #degree=nx.degree(graph)
@@ -171,7 +182,7 @@ def corr_clus_deg(graph):
         #print "correlation clustering avec degres: \n",(a,b),"\n"
 	#return pearsonr(x,y)
 	
-        return r_value**2-0.05*abs(1-slope)
+        return r_value**2
 
 
 	#Scale-free
@@ -209,6 +220,7 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
                                 liste_ASPL.append(nx.average_shortest_path_length(g))
                                 liste_nb_edges.append(g.number_of_edges())
 		ASPL=np.average(a=liste_ASPL,weights=liste_nb_edges)
+	#print 'aspl:',ASPL,"\n","clus",clus,"\n"
 	res=coeff_SPL*ASPL + coeff_connectivite*clus*1.0
         
 	#print "Coeff small world ",res
@@ -220,7 +232,7 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
 
 #crée une mtrice aléatoire de 1 et 0 (que sur le triangle supérieur droit et pas sur la diagonale)
 
-mat=alea_mat(500)
+#mat=alea_mat(500)
 #mat2=alea_mat2(100)
 
 #graphe de reference
@@ -274,26 +286,31 @@ G.add_edges_from(liste)
 #print "Est-il connexe ? ",nx.is_connected(G)
 #print "Nombre de composante connexe : ",nx.number_connected_components(G),"\n"
 
-connected_subgraph=nx.connected_component_subgraphs(G)
-i=1
-for graph in connected_subgraph:
-	if i==1:
-		Gbis=graph.copy()
-	#print "Description du sous-graph biologique ",i
-	#print "Nombre de noeuds : ",graph.number_of_nodes()
-	#print "Nombre de liens : ",graph.number_of_edges()
-	#print "Est-il connexe ? ",nx.is_connected(graph)
-	#print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
-	i+=1
-
+#connected_subgraph=nx.connected_component_subgraphs(G)
+#i=1
+#for graph in connected_subgraph:
+#	if i==1:
+#		Gbis=graph.copy()
+#	print "Description du sous-graph biologique ",i
+#	print "Nombre de noeuds : ",graph.number_of_nodes()
+#	print "Nombre de liens : ",graph.number_of_edges()
+#	print "Est-il connexe ? ",nx.is_connected(graph)
+#	print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
+#	i+=1
+#
 #print "Conclusion il faut prendre le plus grand des sous-graph connexe biologique pour faire notre modele"
-
-#deg_distribution(Gbis)
-#SPL_distribution(Gbis)
-#corr_clus_deg(Gbis)
-#scale_free(Gbis)
-#small_word(Gbis,0.5,0.5)
+#print "nb de noeuds:", Gbis.number_of_nodes(),"\n"
+#print "distribution degres:",deg_distribution(Gbis),"\n"
+#print nx.is_connected(graph)
+#print "SPL distribution:",SPL_distribution(Gbis),"\n"
+#print "corr_clus:",corr_clus_deg(Gbis),"\n"
+#print "scale free:",scale_free(Gbis),"\n"
+#print "small world",small_word(Gbis,0.5,0.5),"\n"
 
 #plt.show()
 
 
+#Gtest=alea_mat(100)
+#Gtest_graph=nx.from_numpy_matrix(Gtest)
+
+#print corr_clus_deg(Gtest_graph)
