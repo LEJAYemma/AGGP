@@ -51,10 +51,11 @@ c = ]0;1[
 
 
 def alea_mat(length):
-	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.95,0.05])))
+	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.5,0.5])))
 	for i in range(length):
 		mat[i,i]=0
         graph=nx.from_numpy_matrix(mat)
+        #print 'COOOOOOOOOOOOOOOOOOOONECCCCCCCTEEEEEEEEE',nx.is_connected(graph),"\n"
         connected_comp=list(nx.connected_component_subgraphs(graph))
         #print len(connected_comp)
         #print mat
@@ -64,6 +65,8 @@ def alea_mat(length):
             nodes.append((connected_comp[j].nodes()[0],connected_comp[j+1].nodes()[0]))
             
         graph.add_edges_from(nodes)
+        #print 'COOOOOOOOOOOOOOOOOOOONECCCCCCCTEEEEEEEEE',nx.is_connected(graph),"\n"
+
         mat=nx.to_numpy_matrix(graph)
         #print nx.is_connected(graph)
         

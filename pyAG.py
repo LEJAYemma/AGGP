@@ -23,7 +23,7 @@ class individu:
         fit = 0
         fit += SPL_distribution(self.graph)[0]*10
         #fit += small_word(self.graph,0.8,0.2) *10
-        fit += nx.is_connected(self.graph)*20
+        #fit += nx.is_connected(self.graph)*20
         fit += corr_clus_deg(self.graph)*10
         fit += scale_free(self.graph)*10
 	#r=0
@@ -71,22 +71,25 @@ class population:
 	    if self.fim>fi:
 		self.fim=fi
 	    self.f.append([fi,i])
-	self.f.sort()
-        #self.f.sort(reverse=True)
+	#self.f.sort()
+        self.f.sort(reverse=True)
         #print "F",self.f
 	self.fitm/=1.0*self.N
 	
     def new_pop(self):
 	self.npop=[]
-	for x in range(self.N/2,self.N):
-            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
-            self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+	#for x in range(self.N*3/4,self.N):
+ #           self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+ #           self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+ #           self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+ #           self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+        for x in range(self.N):
             #self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
             #self.npop.append(self.prod(self.pop[self.f[x][1]].genome) for x in range(1,self.N/2))
-	    #r= randint(0,(self.N+1)*(self.N)/2)
-	    #x=index(self.N,r)
+	    r= randint(0,(self.N+1)*(self.N)/2)
+	    x=index(self.N,r)
 	    #print x,self.f[x][0]
-	    #self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
+	    self.npop.append(self.prod(self.pop[self.f[x][1]].genome))
 
     def mutation(self):
 	for x in self.npop:
@@ -124,14 +127,15 @@ class population:
 	self.update()
 	self.gen += 1
         #print self.pop[1].genome
-	print self.fitm,self.fim,'\n',[nx.is_connected(self.pop[i].graph) for i in range(len(self.pop))]
-        print [nx.number_of_edges(self.pop[i].graph)*2.0/10000 for i in range(len(self.pop))]
+	print self.fitm,self.fim,'\n'
+	#print [nx.is_connected(self.pop[i].graph) for i in range(len(self.pop))]
+        #print [nx.number_of_edges(self.pop[i].graph)*2.0/10000 for i in range(len(self.pop))]
 
 
-nb_iter=20
+nb_iter=100
 seed()
 y=[]
-ga=population(100,individu,0.005,0.05)
+ga=population(100,individu,0.001,0.005)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())
