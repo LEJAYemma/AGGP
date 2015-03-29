@@ -118,13 +118,15 @@ def SPL_distribution(graph):
 	#print 'normalite : \n',(shapiro(C)),"\n"
 	return (shapiro(C))
 	
-def plot_graph(G):
+def plot_graph(G,titre):
 	
-	pos=nx.spring_layout(G)
+	pos1=nx.spring_layout(G)
 	pos2=nx.circular_layout(G)
 	pos3=nx.random_layout(G)
 	pos4=nx.shell_layout(G)
 	pos5=nx.spectral_layout(G)
+
+	pos=pos5
 
 	plt.figure()
 	# nodes
@@ -134,7 +136,7 @@ def plot_graph(G):
 	# labels
 	nx.draw_networkx_labels(G,pos,font_size=20,font_family='sans-serif')
 	plt.axis('off')
-	plt.title("Graphe en position spring")
+	plt.title(titre)
         plt.show()
 
 def corr_clus_deg(graph):

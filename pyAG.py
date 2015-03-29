@@ -131,11 +131,18 @@ class population:
 	#print [nx.is_connected(self.pop[i].graph) for i in range(len(self.pop))]
         #print [nx.number_of_edges(self.pop[i].graph)*2.0/10000 for i in range(len(self.pop))]
 
+    def print_best_graph(self):
+	key_best_graph=self.f[0][1]
+	best_graph=self.pop[key_best_graph]
+	nx_best_graph=best_graph.graph
+	nx.write_gml(nx_best_graph, "best_graph.gml")
+	plot_graph(nx_best_graph,"Graph de la population ayant la meilleure fitness")
+	plt.figure()
 
-nb_iter=100
+nb_iter=5
 seed()
 y=[]
-ga=population(100,individu,0.001,0.005)
+ga=population(10,individu,0.001,0.005)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())
@@ -149,6 +156,7 @@ ga=population(100,individu,0.001,0.005)
 for i in range(nb_iter):
     ga.genloop()
     y.append(ga.fitm)
+    ga.calc_fitness()
     
 y=np.asarray(y)
 
@@ -180,3 +188,4 @@ title("evolution de la fitness moyenne")
 xlabel("nombre d'iterations")
 ylabel("fitness")
 show()
+ga.print_best_graph()
