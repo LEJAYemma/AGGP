@@ -139,10 +139,10 @@ class population:
 	plot_graph(nx_best_graph,"Graph de la population ayant la meilleure fitness")
 	plt.figure()
 
-nb_iter=5
+nb_iter=100
 seed()
 y=[]
-ga=population(10,individu,0.001,0.005)
+ga=population(100,individu,0.001,0.005)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())
