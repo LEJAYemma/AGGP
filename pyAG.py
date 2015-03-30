@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
-from enthought.mayavi import mlab
+#from enthought.mayavi import mlab
 
 class individu:
     def __init__(self,ge=None):
@@ -19,14 +19,15 @@ class individu:
 	    self.graph=nx.from_numpy_matrix(self.genome)
             self.fit=-1
 		
-    def fitness(self):
+    def fitness(self,b_clustering):
         
         
         fit = 0
         fit += SPL_distribution(self.graph)[0]*10
         #fit += small_word(self.graph,0.8,0.2) *10
         #fit += nx.is_connected(self.graph)*20
-        #fit += corr_clus_deg(self.graph)*10
+        if(b_clustering==True):
+		    fit += corr_clus_deg(self.graph)*10
         fit += scale_free(self.graph)*10
 	#r=0
 	#g = 0
@@ -62,13 +63,12 @@ class population:
 	self.pop=[prod() for i in range(N)]
 	self.gen = 0
 
-	
-    def calc_fitness(self):
+    def calc_fitness(self,boolean_clustering):
 	self.f=[]
 	self.fitm=0 ## moyenne
 	self.fim=1000 ## min
  	for i,x in enumerate(self.pop):
-	    fi=x.fitness()
+	    fi=x.fitness(boolean_clustering)
 	    self.fitm += fi
 	    if self.fim>fi:
 		self.fim=fi
@@ -121,8 +121,11 @@ class population:
         for x in self.pop:
             x.maj_graphe()
 
-    def genloop(self):
-	ga.calc_fitness()
+    def genloop(self,limit):
+	if(self.gen>=limit):
+		ga.calc_fitness(True)	
+	else:
+		ga.calc_fitness(False)
 	self.new_pop()
 	self.mutation()
 	self.cross()
@@ -137,6 +140,7 @@ class population:
 
 
 nb_iter=50
+nb_lasts_iter=nb_iter+1 #nb iter à partir duquel on compte le clustering
 seed()
 y=[]
 ga=population(100,individu,0.00003,0.0004)
@@ -148,13 +152,13 @@ ga=population(100,individu,0.00003,0.0004)
 
 for i in range(nb_iter):
     print "ITERATION ", i, "\n"
-    ga.genloop()
+    ga.genloop(nb_lasts_iter)
     y.append(ga.fitm)
     
 
 y=np.asarray(y)
 
-fitnesses=[ga.pop[i].fitness() for i in range(len(ga.pop))]
+fitnesses=[ga.pop[i].fitness(True) for i in range(len(ga.pop))]
 fitnesses=np.asarray(fitnesses)
 print "FITNESS DE NOTRE CHAMPION", max(fitnesses)
 nx.write_graphml(ga.pop[fitnesses.argmax()].graph, "ntest17.graphml")

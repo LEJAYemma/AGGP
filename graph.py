@@ -182,11 +182,11 @@ def corr_clus_deg(graph):
         y2=[]
         x2=[]
                 
-        
         for k in range(2,9):
                 if y[k-2]!=0 and k!=0:
                     x2.append(k)
                     y2.append(1.0/y[k-2])
+                    
         #print "x2:",x2,"\n","y2:",y2,"\n"
         #plot(x,y2)
         #show()
