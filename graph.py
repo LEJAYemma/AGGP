@@ -3,6 +3,7 @@
 import networkx as nx
 import matplotlib.pyplot as plt
 import numpy as np
+from random import *
 from math import *
 from scipy import stats
 from scipy.stats.stats import pearsonr
@@ -51,7 +52,23 @@ c = ]0;1[
 
 
 def alea_mat(length):
-	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.5,0.5])))
+	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.997,0.003])))
+	for j in range(length):
+	   a=random()
+	   if a<0.035:
+	       for k in range(j+1,length):
+	           if random()<0.1:
+	               mat[j,k]=1
+	       #mat[has,k]=1
+	       #mat[has2,k]=1
+            
+	#has=int(random()*length)
+	#has2=int(random()*length)
+	#for k in range(has+1,length):
+	#   if random()<0.75:
+	#       mat[has,k]=1
+	#       mat[has2,k]=1
+	 
 	for i in range(length):
 		mat[i,i]=0
         graph=nx.from_numpy_matrix(mat)
@@ -118,15 +135,13 @@ def SPL_distribution(graph):
 	#print 'normalite : \n',(shapiro(C)),"\n"
 	return (shapiro(C))
 	
-def plot_graph(G,titre):
+def plot_graph(G):
 	
-	pos1=nx.spring_layout(G)
+	pos=nx.spring_layout(G)
 	pos2=nx.circular_layout(G)
 	pos3=nx.random_layout(G)
 	pos4=nx.shell_layout(G)
 	pos5=nx.spectral_layout(G)
-
-	pos=pos5
 
 	plt.figure()
 	# nodes
@@ -136,7 +151,7 @@ def plot_graph(G,titre):
 	# labels
 	nx.draw_networkx_labels(G,pos,font_size=20,font_family='sans-serif')
 	plt.axis('off')
-	plt.title(titre)
+	plt.title("Graphe en position spring")
         plt.show()
 
 def corr_clus_deg(graph):
@@ -160,7 +175,7 @@ def corr_clus_deg(graph):
                  dic[j]=mean(nx.clustering(graph,[i for i in graph.nodes() if graph.degree(i)==j]).values())
 
         #x= dic.keys()
-        x=np.arange(2,9,1)
+        #x=np.arange(2,6,1)
         y=dic.values()[1:8]
         #print "x:",x,"\n","y:",y,"\n"
         #plt.figure()
@@ -242,11 +257,11 @@ def small_word(graph,coeff_SPL,coeff_connectivite):
 
 #graphe de reference
 
-lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
-liste=[line.split(" ")[0:2] for line in lines]
-
-G=nx.Graph()
-G.add_edges_from(liste)
+#lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
+#liste=[line.split(" ")[0:2] for line in lines]
+#
+#G=nx.Graph()
+#G.add_edges_from(liste)
 
 #G=nx.erdos_renyi_graph(1000,0.5)  : random graph
 
@@ -296,11 +311,11 @@ G.add_edges_from(liste)
 #for graph in connected_subgraph:
 #	if i==1:
 #		Gbis=graph.copy()
-#	print "Description du sous-graph biologique ",i
-#	print "Nombre de noeuds : ",graph.number_of_nodes()
-#	print "Nombre de liens : ",graph.number_of_edges()
-#	print "Est-il connexe ? ",nx.is_connected(graph)
-#	print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
+##	print "Description du sous-graph biologique ",i
+##	print "Nombre de noeuds : ",graph.number_of_nodes()
+##	print "Nombre de liens : ",graph.number_of_edges()
+##	print "Est-il connexe ? ",nx.is_connected(graph)
+##	print "Nombre de composante connexe : ",nx.number_connected_components(graph),"\n"
 #	i+=1
 #
 #print "Conclusion il faut prendre le plus grand des sous-graph connexe biologique pour faire notre modele"
@@ -314,6 +329,8 @@ G.add_edges_from(liste)
 
 #plt.show()
 
+#nx.write_graphml(Gbis, "test.graphml")
+#print "OK"
 
 #Gtest=alea_mat(100)
 #Gtest_graph=nx.from_numpy_matrix(Gtest)

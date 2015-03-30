@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from random import *
 from graph import * 
 from copy import deepcopy
@@ -5,11 +6,12 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
+from enthought.mayavi import mlab
 
 class individu:
     def __init__(self,ge=None):
 	if ge is None :
-	    self.genome=alea_mat(100)
+	    self.genome=alea_mat(300)
 	    self.graph=nx.from_numpy_matrix(self.genome)
 	    self.fit=-1
 	else:
@@ -24,7 +26,7 @@ class individu:
         fit += SPL_distribution(self.graph)[0]*10
         #fit += small_word(self.graph,0.8,0.2) *10
         #fit += nx.is_connected(self.graph)*20
-        fit += corr_clus_deg(self.graph)*10
+        #fit += corr_clus_deg(self.graph)*10
         fit += scale_free(self.graph)*10
 	#r=0
 	#g = 0
@@ -129,56 +131,44 @@ class population:
         #print self.pop[1].genome
 	print self.fitm,self.fim,'\n'
 	#print [nx.is_connected(self.pop[i].graph) for i in range(len(self.pop))]
-        #print [nx.number_of_edges(self.pop[i].graph)*2.0/10000 for i in range(len(self.pop))]
+	if self.gen%10 == 0:
+	   
+            print [nx.number_of_edges(self.pop[i].graph)*1.0/1000 for i in range(len(self.pop)) ]
 
-    def print_best_graph(self):
-	key_best_graph=self.f[0][1]
-	best_graph=self.pop[key_best_graph]
-	nx_best_graph=best_graph.graph
-	nx.write_gml(nx_best_graph, "best_graph.gml")
-	plot_graph(nx_best_graph,"Graph de la population ayant la meilleure fitness")
-	plt.figure()
 
-nb_iter=100
+nb_iter=50
 seed()
 y=[]
-ga=population(100,individu,0.001,0.005)
+ga=population(100,individu,0.00003,0.0004)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())
 #     print ga.pop[i].genome
 
-# print y
-#print ga.pop[1].genome
-#ga.genloop()
-#print ga.pop[1].genome
 
 for i in range(nb_iter):
+    print "ITERATION ", i, "\n"
     ga.genloop()
     y.append(ga.fitm)
-    ga.calc_fitness()
     
+
 y=np.asarray(y)
 
-#r=0
-#f=open("btr2.dat","w")
-#for x in ga.pop[ga.f[0][1]].genome:
-#    r+=2*x-1
-#    f.write("%d\n"%r)
-#f.close()
+fitnesses=[ga.pop[i].fitness() for i in range(len(ga.pop))]
+fitnesses=np.asarray(fitnesses)
+print "FITNESS DE NOTRE CHAMPION", max(fitnesses)
+nx.write_graphml(ga.pop[fitnesses.argmax()].graph, "ntest17.graphml")
 
 
 
-
-
-# lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
-# liste=[line.split(" ")[0:2] for line in lines]
-
-# G=nx.Graph()
-# G.add_edges_from(liste)
-# matrix=nx.to_numpy_matrix(G)
-# copain2=individu(matrix)
-# print "fit ECOLI:",copain2.fitness()
+#lines=open('coliInterNoAutoRegVec.txt',"r").readlines()
+#liste=[line.split(" ")[0:2] for line in lines]
+#
+#G=nx.Graph()
+#G.add_edges_from(liste)
+#matrix=nx.to_numpy_matrix(G)
+#copain2=individu(matrix)
+#print "fit ECOLI:",copain2.fitness()
 
 
 fig = plt.figure()
@@ -188,4 +178,7 @@ title("evolution de la fitness moyenne")
 xlabel("nombre d'iterations")
 ylabel("fitness")
 show()
-ga.print_best_graph()
+
+print "COOOORRRRRCLUSDEGGGG", corr_clus_deg(ga.pop[fitnesses.argmax()].graph)
+
+
