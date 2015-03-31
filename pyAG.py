@@ -6,7 +6,7 @@ import networkx as nx
 import numpy as np
 import matplotlib.pyplot as plt
 from pylab import *
-#from enthought.mayavi import mlab
+from enthought.mayavi import mlab
 
 class individu:
     def __init__(self,ge=None):
@@ -19,15 +19,14 @@ class individu:
 	    self.graph=nx.from_numpy_matrix(self.genome)
             self.fit=-1
 		
-    def fitness(self,b_clustering):
+    def fitness(self):
         
         
         fit = 0
         fit += SPL_distribution(self.graph)[0]*10
         #fit += small_word(self.graph,0.8,0.2) *10
         #fit += nx.is_connected(self.graph)*20
-        if(b_clustering==True):
-		    fit += corr_clus_deg(self.graph)*10
+        fit += corr_clus_deg(self.graph)*10
         fit += scale_free(self.graph)*10
 	#r=0
 	#g = 0
@@ -63,12 +62,13 @@ class population:
 	self.pop=[prod() for i in range(N)]
 	self.gen = 0
 
-    def calc_fitness(self,boolean_clustering):
+	
+    def calc_fitness(self):
 	self.f=[]
 	self.fitm=0 ## moyenne
 	self.fim=1000 ## min
  	for i,x in enumerate(self.pop):
-	    fi=x.fitness(boolean_clustering)
+	    fi=x.fitness()
 	    self.fitm += fi
 	    if self.fim>fi:
 		self.fim=fi
@@ -98,9 +98,17 @@ class population:
             g = deepcopy(x.genome)
             for i in range(len(g)):
                 for j in range(i+1,len(g)):
-                    if random()<self.txMut:
-                        g[i+1,j]=1-g[i+1,j]
+                    if g[i+1,j]==1:
+                        if random()<self.txMut:
+                            g[i+1,j]=1-g[i+1,j]
+                            a=int(len(g)*random())
+                            b=int(len(g)*random())
+                            g[a,b]=1-g[a,b]
     
+    
+    #                if random()<self.txMut:
+    #                    g[i+1,j]=1-g[i+1,j]
+    #
             x.genome=deepcopy(g)
         
 
@@ -121,11 +129,8 @@ class population:
         for x in self.pop:
             x.maj_graphe()
 
-    def genloop(self,limit):
-	if(self.gen>=limit):
-		ga.calc_fitness(True)	
-	else:
-		ga.calc_fitness(False)
+    def genloop(self):
+	ga.calc_fitness()
 	self.new_pop()
 	self.mutation()
 	self.cross()
@@ -140,10 +145,9 @@ class population:
 
 
 nb_iter=50
-nb_lasts_iter=nb_iter+1 #nb iter à partir duquel on compte le clustering
 seed()
 y=[]
-ga=population(100,individu,0.00003,0.0004)
+ga=population(100,individu,0.003,0.0004)
 
 # for i in range(10):
 #     y.append(ga.pop[i].fitness())
@@ -152,16 +156,16 @@ ga=population(100,individu,0.00003,0.0004)
 
 for i in range(nb_iter):
     print "ITERATION ", i, "\n"
-    ga.genloop(nb_lasts_iter)
+    ga.genloop()
     y.append(ga.fitm)
     
 
 y=np.asarray(y)
 
-fitnesses=[ga.pop[i].fitness(True) for i in range(len(ga.pop))]
+fitnesses=[ga.pop[i].fitness() for i in range(len(ga.pop))]
 fitnesses=np.asarray(fitnesses)
 print "FITNESS DE NOTRE CHAMPION", max(fitnesses)
-nx.write_graphml(ga.pop[fitnesses.argmax()].graph, "ntest17.graphml")
+nx.write_graphml(ga.pop[fitnesses.argmax()].graph, "ntest19.graphml")
 
 
 

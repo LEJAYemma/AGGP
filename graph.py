@@ -52,7 +52,7 @@ c = ]0;1[
 
 
 def alea_mat(length):
-	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.997,0.003])))
+	mat=np.triu(np.matrix(np.random.choice(2,size=(length,length),p=[0.992,0.008])))
 	for j in range(length):
 	   a=random()
 	   if a<0.035:
@@ -182,11 +182,11 @@ def corr_clus_deg(graph):
         y2=[]
         x2=[]
                 
+        
         for k in range(2,9):
                 if y[k-2]!=0 and k!=0:
                     x2.append(k)
                     y2.append(1.0/y[k-2])
-                    
         #print "x2:",x2,"\n","y2:",y2,"\n"
         #plot(x,y2)
         #show()
